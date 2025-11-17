@@ -1,0 +1,18 @@
+# Python 缓存
+__pycache__/
+*.py[cod]
+
+# Jupyter
+.ipynb_checkpoints/
+
+# 虚拟环境（通用）
+venv/
+.venv/
+env/
+ENV/
+
+# VS Code
+.vscode/
+
+# 防止以后再往项目里扔 Git 安装目录（以防万一）
+Git/
