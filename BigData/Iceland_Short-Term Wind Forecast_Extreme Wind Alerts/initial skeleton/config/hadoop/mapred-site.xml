@@ -1,0 +1,9 @@
+cp "$HADOOP_CONF_DIR/mapred-site.xml.template" "$HADOOP_CONF_DIR/mapred-site.xml"
+cat > "$HADOOP_CONF_DIR/mapred-site.xml" << 'EOF'
+<configuration>
+  <property>
+    <name>mapreduce.framework.name</name>
+    <value>yarn</value>
+  </property>
+</configuration>
+EOF

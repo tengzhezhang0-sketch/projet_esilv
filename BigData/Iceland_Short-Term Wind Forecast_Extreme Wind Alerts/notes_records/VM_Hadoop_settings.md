@@ -95,18 +95,21 @@ ssh worker1 "hostname"
 ```
 
 6. 配置 hadoop 自己用的环境&文件 <- 在 master 上给 Hadoop 做配置后，同步到worker1
+一点过要记得检查目录，用户名是不是一致 <- 因为不一致反复配置了好几次
 ```bash
-cat >> ~/.bashrc <<'EOF'
-export JAVA\_HOME=/usr/lib/jvm/java-11-openjdk-amd64
-export HADOOP\_HOME=/home/hadoop/hadoop
-export HADOOP\_CONF\_DIR=$HADOOP\_HOME/etc/hadoop
-export PATH=$PATH:$HADOOP\_HOME/bin:$HADOOP\_HOME/sbin
+sudo -i -u hadoop
+
+cat >> ~/.bashrc << 'EOF'
+export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+export HADOOP_HOME=/usr/local/hadoop
+export HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop
+export PATH=$HADOOP_HOME/bin:$HADOOP_HOME/sbin:$PATH
 EOF
+
 source ~/.bashrc
 
 # 最小配置
 echo 'export JAVA\_HOME=/usr/lib/jvm/java-11-openjdk-amd64' >> $HADOOP\_CONF\_DIR/hadoop-env.sh
-mkdir -p /home/hadoop/hadoop\_data/nn /home/hadoop/hadoop\_data/dn
 cat > $HADOOP\_CONF\_DIR/core-site.xml <<'EOF'
 <configuration>
 <property>
@@ -124,11 +127,11 @@ cat > $HADOOP\_CONF\_DIR/hdfs-site.xml <<'EOF'
 </property>
 <property>
 <name>dfs.namenode.name.dir</name>
-<value>file:///home/hadoop/hadoop\_data/nn</value>
+<value>file:///usr/local/hadoop/data/namenode</value>
 </property>
 <property>
 <name>dfs.datanode.data.dir</name>
-<value>file:///home/hadoop/hadoop\_data/dn</value>
+<value>file:///usr/local/hadoop/data/datanode</value>
 </property>
 </configuration>
 EOF
@@ -159,16 +162,36 @@ EOF
 # 让master 也作为 worker
 echo -e "master\\nworker1" > $HADOOP\_CONF\_DIR/workers
 
-# 同步到 worker1 并建数据目录
-rsync -av --delete ~/hadoop hadoop@worker1:/home/hadoop/
+# 同步到 worker1 
+cd ~
+rsync -av $HADOOP_HOME/etc/hadoop/ hadoop@worker1:$HADOOP_HOME/etc/hadoop/
 rsync -av ~/.bashrc hadoop@worker1:/home/hadoop/
-ssh worker1 'mkdir -p /home/hadoop/hadoop\_data/dn'
 
 # 不知道为啥之后发现worker1环境变量还是没配置好，又手动加了PATH
 nano ~/.bashrc
 export HADOOP_HOME=/usr/local/hadoop
 export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
 source ~/.bashrc
+
+# 在 master 上创建日志目录 (因为之前数据目录配置好了)
+sudo mkdir -p /usr/local/hadoop/logs
+
+sudo chown hadoop:hadoop /usr/local/hadoop/logs
+sudo chmod 750 /usr/local/hadoop/logs
+
+# 在 worker1 上创建数据目录 & 日志目录
+# 数据目录
+sudo mkdir -p /usr/local/hadoop/data/namenode
+sudo mkdir -p /usr/local/hadoop/data/datanode
+# 日志目录
+sudo mkdir -p /usr/local/hadoop/logs
+
+sudo chown -R hadoop:hadoop /usr/local/hadoop/data
+sudo chown hadoop:hadoop /usr/local/hadoop/logs
+
+sudo chmod -R 750 /usr/local/hadoop/data
+sudo chmod 750 /usr/local/hadoop/logs
+
 
 # 初始化启动
 hdfs namenode -format
@@ -281,6 +304,28 @@ ssh -NT -L 8088:10.0.0.36:8088 adm-mcsc@esilv-mcscin5a1825-0030.westeurope.cloud
 
 # 打开浏览器
 # http://localhost:8088
+
+## start-dfs脚本出问题时启动流程
+# 1. master 上，以 hadoop 用户
+sudo -i -u hadoop
+source ~/.bashrc
+
+# HDFS 守护进程
+hdfs --daemon start namenode
+hdfs --daemon start datanode
+
+# 2. worker1 上，以 hadoop 用户
+sudo -i -u hadoop
+source ~/.bashrc
+hdfs --daemon start datanode
+
+# 3. 回 master 上，启动 YARN
+start-yarn.sh
+
+# 4. 验证
+jps
+ssh worker1 'jps'
+
 ```
 
 2. 创建目录

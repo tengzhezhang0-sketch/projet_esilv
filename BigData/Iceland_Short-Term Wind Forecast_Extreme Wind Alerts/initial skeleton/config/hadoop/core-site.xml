@@ -1,0 +1,8 @@
+cat > "$HADOOP_CONF_DIR/core-site.xml" << 'EOF'
+<configuration>
+  <property>
+    <name>fs.defaultFS</name>
+    <value>hdfs://master:9000</value>
+  </property>
+</configuration>
+EOF

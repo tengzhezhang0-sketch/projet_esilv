@@ -1,6 +1,6 @@
-## kafka（broker + zookeeper） 总体框架 + 配置 （创建目录 + 设置权限）
+# kafka（broker + zookeeper） 总体框架 + 配置 （创建目录 + 设置权限）
 
-### 一：总体框架
+## 一：总体框架
 
 **VM1（master）：** zookeeper (数据目录) + kafka (数据目录+日志目录)
 
@@ -8,7 +8,7 @@
 
 ---
 
-### 二： 配置 
+## 二： 配置 
 
 1. 下载VM
 ```bash
