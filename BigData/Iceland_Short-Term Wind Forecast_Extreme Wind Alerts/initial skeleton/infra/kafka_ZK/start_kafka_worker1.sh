@@ -11,5 +11,5 @@ echo "== 启动 Kafka broker (worker1) =="
 bin/kafka-server-start.sh -daemon config/server.properties
 
 sleep 2
-echo "== 检查 9092 端口 =="
-ss -tnlp | grep 9092 || echo "WARN: 似乎没有进程在监听 9092, 请检查日志。"
+echo "== 检查 9093 端口 =="
+ss -tnlp | grep 9093 || echo "WARN: 似乎没有进程在监听 9093, 请检查日志。"

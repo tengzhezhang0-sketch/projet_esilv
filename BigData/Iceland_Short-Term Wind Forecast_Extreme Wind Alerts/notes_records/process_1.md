@@ -1,6 +1,10 @@
-# 跑通 ZK 与 Kafka
+# 启动Hadoop，kafka
 
 ## 一：总体框架
+
+**VM1（master）：** NameNode + DataNode + ResourceManager 
+**VM1（master）：** DataNode + NodeManager
+
 **VM1（master）：** ZK + broker1
 **VM1（master）：** broker2
 
@@ -8,7 +12,54 @@ ZK下注册有broker1(master)和broker2(worker1)
 ---
 
 ## 二：流程
-### 在VM1上
+
+### 链接虚拟机
+ssh adm-mcsc@esilv-mcscin5a1825-0030.westeurope.cloudapp.azure.com\
+ssh adm-mcsc@esilv-mcscin5a1825-0031.westeurope.cloudapp.azure.com
+
+1. 登录jupyter网页（我一般master在网页上跑，worker1在本机跑）
+```bash
+source /opt/spark/venv/bin/activate
+
+jupyter lab --ip=0.0.0.0 --port=8888 --no-browser
+
+# 新开一个终端，不要关
+ssh -L 8888:localhost:8888 adm-mcsc@esilv-mcscin5a1825-0030.westeurope.cloudapp.azure.com
+
+# http://localhost:8888/ 使用输出的token登录
+```
+
+### 启动hadoop
+- 在VM1上
+1. 以hadoop用户启动datanode和namenode
+```bash
+sudo -i -u hadoop 
+# 报错了就去重设nano
+source ~/.bashrc
+hdfs --daemon start namenode
+hdfs --daemon start datanode
+start-yarn.sh
+jps
+ssh worker1 'jps'
+```
+
+2. 建目录
+```bash
+hdfs dfs -mkdir -p /data/weather/raw
+hdfs dfs -mkdir -p /checkpoints/weather_raw
+```
+
+-在VM2上
+3. 以hadoop用户启动datanode
+```bash
+sudo -i -u hadoop 
+source ~/.bashrc
+hdfs --daemon start datanode
+jps
+```
+
+### 启动kafka
+- 在VM1上
 1. 以kafka用户启动Zookeeper
 ```bash
 sudo su - kafka
@@ -18,7 +69,7 @@ bin/zookeeper-server-start.sh config/zookeeper.properties
 # 后台启动
 bin/zookeeper-server-start.sh -daemon config/zookeeper.properties
 
-# 在另一个终端验证
+# 验证
 ss -tnlp | grep 2181 # 看 2181 端口是否在监听（Ubuntu 24 用 ss）
 ```
 
@@ -48,7 +99,7 @@ sudo su - kafka
 cd /opt/kafka
 
 # 如果跑挂了可以启动前，在当前shell里给kafka限制一个小一点的堆(heap)
-# export KAFKA_HEAP_OPTS="-Xms512m -Xmx512m"
+export KAFKA_HEAP_OPTS="-Xms256m -Xmx256m"
 bin/kafka-server-start.sh config/server.properties
 # 保持这个终端一直开着
 
@@ -57,7 +108,7 @@ ss -tnlp | grep 9092
 ps aux | grep kafka.Kafka | grep -v grep
 ```
 
-### 在VM2上
+- 在VM2上
 4. 为了让VM2连接上ZK，为ZM做一些基本配置
 ```bash
 ssh adm-mcsc@esilv-mcscin5a1825-0031.westeurope.cloudapp.azure.com
@@ -67,8 +118,8 @@ sudo tee -a config/server.properties << 'EOF'
 
 ######## custom settings for our cluster ########
 broker.id=2 
-listeners=PLAINTEXT://master:9092 
-advertised.listeners=PLAINTEXT://master:9092 
+listeners=PLAINTEXT://master:9093 
+advertised.listeners=PLAINTEXT://master:9093 
 zookeeper.connect=master:2181 （
 EOF
 ```
@@ -90,3 +141,4 @@ cd /opt/kafka
 # 看一下集群里的 broker 列表
 bin/zookeeper-shell.sh master:2181 <<< "ls /brokers/ids"
 ```
+

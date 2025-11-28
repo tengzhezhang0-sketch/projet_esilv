@@ -31,7 +31,7 @@
     "    df = (\n",
     "        spark.readStream\n",
     "        .format(\"kafka\") \n",
-    "        .option(\"kafka.bootstrap.servers\", \"master:9092,worker1:9092\") # kafka集群地址\n",
+    "        .option(\"kafka.bootstrap.servers\", \"master:9092,worker1:9093\") # kafka集群地址\n",
     "        .option(\"subscribe\", \"weather_iceland_raw\") # 订阅kafka中的topic\n",
     "        .option(\"startingOffsets\", \"latest\") # 从最新的偏移量开始读\n",
     "        .load()\n",

@@ -1,6 +1,7 @@
 # Hadoop 集群脚本说明
 
 本目录存放的是 **在两台 VM 上启动 Hadoop 的脚本和说明**。  
+**！！权限没设置好，脚本暂时跑起来，之后改一下**
 
 集群拓扑如下：
 
@@ -52,7 +53,7 @@
 ```bash
 # 在master上，切到hadoop用户，进入脚本目录并执行：
 sudo -i -u hadoop
-cd ~/Iceland_Short-Term.../initial\ skeleton/infra/hadooop   
+cd ~/projet_esilv/BigData/'Iceland_Short-Term Wind Forecast_Extreme Wind Alerts'/'initial skeleton'/infra/hadoop   
 
 bash setup_hadoop_config.sh
 
@@ -71,13 +72,13 @@ hdfs namenode -format
 3. 每次开机之后启动集群时：
 - 在 master 上运行 `start_hadoop_master.sh`（可以用 adm-mcsc 用户）
    ```bash
-   cd ~/Iceland_Short-Term.../initial\ skeleton/infra/hadooop
+   cd ~/projet_esilv/BigData/'Iceland_Short-Term Wind Forecast_Extreme Wind Alerts'/'initial skeleton'/infra/hadoop 
 
    bash start_hadoop_master.sh
    ```
 - 在 worker1 上运行 `start_datanode_worker1.sh`（可以用 adm-mcsc 用户）
    ```bash
-   cd ~/Iceland_Short-Term.../initial\ skeleton/infra/hadooop
+   cd ~/projet_esilv/BigData/'Iceland_Short-Term Wind Forecast_Extreme Wind Alerts'/'initial skeleton'/infra/hadoop 
 
    bash start_datanode_worker1.sh
    ```
@@ -87,7 +88,7 @@ hdfs namenode -format
 # 在master上，切到hadoop用户
 sudo -i -u hadoop
 source ~/.bashrc
-cd ~/Iceland_Short-Term.../initial\ skeleton/infra/hadooop
+cd ~/projet_esilv/BigData/'Iceland_Short-Term Wind Forecast_Extreme Wind Alerts'/'initial skeleton'/infra/hadoop  
 
 bash check_hadoop_settings.sh
 ```

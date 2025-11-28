@@ -17,6 +17,7 @@ tengzhe.zhang@edu.devinci.fr
 ssh adm-mcsc@esilv-mcscin5a1825-0030.westeurope.cloudapp.azure.com\
 ssh adm-mcsc@esilv-mcscin5a1825-0031.westeurope.cloudapp.azure.com
 ```
+ssh -L 8888:localhost:8888 adm-mcsc@esilv-mcscin5a1825-0030.westeurope.cloudapp.azure.com
 ---
 ## 二：总体框架
 **VM1（master）：** Namenode + Datanode

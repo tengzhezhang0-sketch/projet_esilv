@@ -6,8 +6,8 @@ set -euo pipefail
 KAFKA_HOME="/opt/kafka"
 KAFKA_USER="kafka"
 
-LOG_DIR="/var/log/kafka"
-DATA_DIR="/data/kafka/broker"
+LOG_DIR="/var/log/kafka_1"
+DATA_DIR="/data/kafka/broker_1"
 ZK_DATA_DIR="$KAFKA_HOME/zk-data"
 
 if [[ ! -d "$KAFKA_HOME" ]]; then

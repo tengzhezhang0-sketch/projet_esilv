@@ -6,8 +6,8 @@ set -euo pipefail
 KAFKA_HOME="/opt/kafka"
 KAFKA_USER="kafka"
 
-LOG_DIR="/var/log/kafka"
-DATA_DIR="/data/kafka/broker"
+LOG_DIR="/var/log/kafka_2"
+DATA_DIR="/data/kafka/broker_2"
 
 if [[ ! -d "$KAFKA_HOME" ]]; then
   echo "ERROR: $KAFKA_HOME 不存在，请确认 Kafka 已经解压到 /opt/kafka 下。"
@@ -39,6 +39,6 @@ fi
 
 echo "== 配置 broker.id / listeners =="
 sudo sed -i "s/^broker.id=.*/broker.id=2/" "$SERVER_PROP"
-sudo sed -i "s|^#\?listeners=.*|listeners=PLAINTEXT://worker1:9092|" "$SERVER_PROP"
+sudo sed -i "s|^#\?listeners=.*|listeners=PLAINTEXT://worker1:9093|" "$SERVER_PROP"
 
 echo "Done on worker1. 之后记得以 kafka 用户启动 broker。"

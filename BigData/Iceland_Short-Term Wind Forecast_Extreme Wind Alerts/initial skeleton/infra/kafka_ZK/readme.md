@@ -1,6 +1,7 @@
 # Kafka / ZooKeepe 集群脚本说明
 
 本目录存放的是 **在两台 VM 上启动 Kafka / ZooKeepe 的脚本和说明**。  
+**！！权限没设置好，脚本暂时跑起来，之后改一下**
 
 集群拓扑如下：
 
@@ -14,10 +15,13 @@
 
 1. 已创建 `kafka` 用户, 并能 `sudo -i -u kafka`
 
-2. **数据目录:** broker #1 & #2 -> `/data/kafka/broker` 
+2. **数据目录:** 
+    - broker #1 -> `/data/kafka/broker_1` 
+    - broker #2 -> `/data/kafka/broker_2` 
 
    **日志目录:**
-    - broker #1 & #2 -> `/var/log/kafka` 
+    - broker #1 -> `/var/log/kafka_1` 
+    - broker #2 -> `/var/log/kafka_2` 
     - zookeeper -> `/opt/kafka/zk-data`
 
 ## 2. 文件列表
